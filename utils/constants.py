@@ -1,0 +1,9 @@
+LOCAL_CONCERT_LIST = "http://www.cringe.com"
+WEATHER_ZIP_CODE= 43017
+SUBREDDIT_LIST = ["watches", "collegebasketball", "nostalgia", "movies", "aww"]
+NEWS_URL = 'https://news.mit.edu/topic/artificial-intelligence2'
+KEYWORDS = ['generative', 'artificial intelligence', 'deep learning', 'machine learning', 'ai', 'network']
+AI_NEWS_BASE_URL = "https://news.mit.edu"
+LAT=40.1157
+LON=-83.1327
+WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/forecast"
