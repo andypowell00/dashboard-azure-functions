@@ -2,7 +2,7 @@ import os
 import logging
 import praw  # Reddit API wrapper
 from datetime import datetime
-from pymongo import MongoClient
+from src.utils.db_connection import get_collection
 
 # Set up Reddit client
 reddit = praw.Reddit(
@@ -11,15 +11,9 @@ reddit = praw.Reddit(
     user_agent=os.getenv('REDDIT_USER_AGENT')
 )
 
-# Get MongoDB connection string
-connection_string = os.getenv("COSMOS_DB_CONNECTION_STRING")
-    
-    # Create a MongoDB client
-client = MongoClient(connection_string)
-db = client[os.getenv("COSMOS_DB_DATABASE_NAME")]
-collection = db[os.getenv("COSMOS_DB_CONTAINER_NAME")]
+collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
 
-def fetch_and_store_reddit_posts(subreddit_name, post_limit=2):
+def fetch_and_store_reddit_posts(subreddit_name, post_limit=5):
     try:
         subreddit = reddit.subreddit(subreddit_name)
         posts = subreddit.hot(limit=post_limit)

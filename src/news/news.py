@@ -3,17 +3,11 @@ import logging
 import os
 from datetime import datetime
 from bs4 import BeautifulSoup
-from pymongo import MongoClient
+from src.utils.db_connection import get_collection
 from src.utils.constants import *
 
-
-# Get MongoDB connection string
-connection_string = os.getenv("COSMOS_DB_CONNECTION_STRING")
-    
-    # Create a MongoDB client
-client = MongoClient(connection_string)
-db = client[os.getenv("COSMOS_DB_DATABASE_NAME")]
-news_collection = db[os.getenv("COSMOS_DB_CONTAINER_NAME")]
+# Specify the collection you need
+news_collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
 
 
 def get_headline_urls(news_url, keywords):
