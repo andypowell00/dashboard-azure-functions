@@ -12,7 +12,7 @@ app = func.FunctionApp()
 
 # 1. Reddit Trigger
 @app.function_name(name="InsertRedditPostsTimerTrigger")
-@app.timer_trigger(schedule="0 0 5 * * *", arg_name="redditTimer", run_on_startup=True, use_monitor=True) 
+@app.timer_trigger(schedule="0 0 5 * * *", arg_name="redditTimer", run_on_startup=False, use_monitor=False) 
 def RedditTrigger(redditTimer: func.TimerRequest) -> None:
     if redditTimer.past_due:
         logging.info('The timer is past due!')
@@ -22,7 +22,7 @@ def RedditTrigger(redditTimer: func.TimerRequest) -> None:
 
 # 2. News Trigger - Every morning at 5 a.m. EST :0 0 5 * * *  test schedule: */20 * * * * *
 @app.function_name(name="InsertNewsTimerTrigger")
-@app.timer_trigger(schedule="0 0 5 * * *", arg_name="newsTimer", run_on_startup=True, use_monitor=True) 
+@app.timer_trigger(schedule="0 0 5 * * *", arg_name="newsTimer", run_on_startup=False, use_monitor=False) 
 def NewsTrigger(newsTimer: func.TimerRequest) -> None:
     if newsTimer.past_due:
         logging.info('The timer is past due!')
@@ -31,7 +31,7 @@ def NewsTrigger(newsTimer: func.TimerRequest) -> None:
 
 # 3. Weather Trigger - Every Monday at 5 a.m. EST :0 0 5 * * 1  test: */20 * * * * *
 @app.function_name(name="InsertWeatherTimerTrigger")
-@app.timer_trigger(schedule="0 0 5 * * 1", arg_name="weatherTimer", run_on_startup=True, use_monitor=True) 
+@app.timer_trigger(schedule="0 0 5 * * 1", arg_name="weatherTimer", run_on_startup=False, use_monitor=False) 
 def WeatherTrigger(weatherTimer: func.TimerRequest) -> None:
     if weatherTimer.past_due:
         logging.info('The timer is past due!')

@@ -21,6 +21,9 @@ def fetch_and_store_reddit_posts(subreddit_name, post_limit=5):
         post_data = []
         
         for post in posts:
+             # Skip posts authored by AutoModerator
+            if str(post.author).lower() == "automoderator":
+                continue
             image_url = post.url if post.url.endswith(('.jpg', '.png', '.gif', '.jpeg', '.img')) else None
 
             post_info = {

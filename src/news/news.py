@@ -30,31 +30,30 @@ def get_headline_urls(news_url, keywords):
         logging.error(f"An error occurred: {e}")
         return None
 
+
 def get_article_details(article_url):
     try:
         full_url = AI_NEWS_BASE_URL + article_url
         response = requests.get(full_url)
         soup = BeautifulSoup(response.text, 'html.parser')
 
+        # Get article title
+        article_title = soup.find('title').text.strip() if soup.find('title') else "No title available"
+
         # Get article body
         article_body = soup.find('article').text.strip() if soup.find('article') else "No content available"
-
-        # Get image URL if available
-        image_url = None
-        image_tag = soup.find('img')
-        if image_tag:
-            image_url = image_tag.get('src')
 
         return {
             "type": "news",
             "url": full_url,
+            "title": article_title,
             "body": article_body,
-            "image_url": image_url,
             "date": datetime.today().strftime('%Y-%m-%d')  # Add the current date
         }
     except Exception as e:
         logging.error(f"An error occurred while retrieving article details: {e}")
         return None
+
 
 def save_article_to_mongo(article_details):
     try:
@@ -66,6 +65,7 @@ def save_article_to_mongo(article_details):
             logging.warning("No article details provided to save.")
     except Exception as e:
         logging.error(f"Failed to save article to MongoDB: {e}")
+
 
 def fetch_and_store_news():
     headline_urls = get_headline_urls(NEWS_URL, KEYWORDS)
