@@ -5,8 +5,8 @@ from src.reddit.reddit_posts import fetch_and_store_reddit_posts
 from src.news.news import fetch_and_store_news
 from src.weather.weather import fetch_and_store_weather_data
 from src.movies.trailers import fetch_and_store_trailers
-from src.music.albums import fetch_and_store_albums
-from src.utils.constants import SUBREDDIT_LIST, LAT, LON
+from src.music.pitchfork import fetch_and_store_feeds
+from src.utils.constants import SUBREDDIT_LIST, LAT, LON, PF_RSS_URLS
 
 
 # Create a FunctionApp instance
@@ -40,21 +40,21 @@ def WeatherTrigger(weatherTimer: func.TimerRequest) -> None:
     fetch_and_store_weather_data(LAT,LON)
     logging.info('Weather data fetched and stored every Monday at 5 a.m. EST')
 
-# 4. Movie Trailer Trigger - 1st of da Month ala Bone Thugs
+# 4. Movie Trailer Trigger - 5th of da Month ala Bone Thugs (almost)
 @app.function_name(name="InsertTrailersTimerTrigger")
-@app.timer_trigger(schedule="0 0 1 * *", arg_name="trailersTimer", run_on_startup=False, use_monitor=False)
+@app.timer_trigger(schedule="0 0 5 * *", arg_name="trailersTimer", run_on_startup=False, use_monitor=False)
 def TrailerTrigger(trailersTimer: func.TimerRequest) -> None:
     if trailersTimer.past_due:
         logging.info('The timer is past due!')
     fetch_and_store_trailers()  
     logging.info('Trailer data fetched on the 1st of each month')
 
-# 5. Album Release Trigger - 1st of da Month ala Bone Thugs once again
-@app.function_name(name="InsertAlbumsTimerTrigger")
-@app.timer_trigger(schedule="0 0 1 * *", arg_name="albumsTimer", run_on_startup=False, use_monitor=False)
-def TrailerTrigger(albumsTimer: func.TimerRequest) -> None:
-    if albumsTimer.past_due:
+# 5. Music news every 2 weeks
+@app.function_name(name="InsertMusicNewsTimerTrigger")
+@app.timer_trigger(schedule="0 0 1,15 * *", arg_name="musicTimer", run_on_startup=False, use_monitor=False)
+def MusicTrigger(musicTimer: func.TimerRequest) -> None:
+    if musicTimer.past_due:
         logging.info('The timer is past due!')
-    fetch_and_store_albums()  
-    logging.info('Album data fetched on the 1st of each month')    
+    fetch_and_store_feeds(PF_RSS_URLS)  
+    logging.info('Music info grabbed every 2 weeks')    
 

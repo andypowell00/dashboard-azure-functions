@@ -4,7 +4,7 @@
 
 azure-functions
 pymongo
-beautifulsoup4
 requests
 praw
 google-api-python-client
+feedparser
