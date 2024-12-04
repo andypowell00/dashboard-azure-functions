@@ -33,7 +33,8 @@ def fetch_rss_items(feed_url):
                 "title": entry.get("title"),
                 "body": entry.get("summary", ""),  # Use `summary` for the article content
                 "thumbnail": thumbnail_url,
-                "date": entry.get("published", datetime.today().strftime('%Y-%m-%d'))  # Fallback to today's date
+                "date": entry.get("published", datetime.today().strftime('%Y-%m-%d')),  # Fallback to today's date
+                "insertDate": datetime.today().strftime('%Y-%m-%d'), 
             })
 
         return articles

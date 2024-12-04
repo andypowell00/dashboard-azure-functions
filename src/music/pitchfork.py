@@ -27,6 +27,7 @@ def fetch_rss_items(feed_url):
             "title": entry.get("title"),
             "url": entry.get("link"),
             "date": entry.get("published", datetime.now().isoformat()),
+            "insertDate": datetime.today().strftime('%Y-%m-%d'), 
             "description": entry.get("description", ""),
             "category": entry.get("category", "Uncategorized"),
             "thumbnail": extract_thumbnail(entry)
