@@ -2,8 +2,8 @@ import os
 import logging
 from datetime import datetime, timezone
 from googleapiclient.discovery import build
+from src.utils.constants import MUSIC_VIDEOS_CHANNEL_IDS
 from src.utils.db_connection import get_collection
-from src.utils.constants import TRAILER_CHANNEL_IDS
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -12,30 +12,17 @@ logging.basicConfig(level=logging.INFO)
 API_KEY = os.getenv('YOUTUBE_API_KEY')
 collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
 
-def fetch_channel_videos(channel_id):
-    """Fetch today's trailer videos directly from a channel's uploads."""
+def fetch_playlist_videos(playlist_id):
+    """Fetch today's new videos from a playlist by playlist ID, skipping private videos."""
     try:
         youtube = build('youtube', 'v3', developerKey=API_KEY)
         videos = []
         today = datetime.now(timezone.utc).date()
 
-        # First, get the channel's uploads playlist ID
-        channels_response = youtube.channels().list(
-            part="contentDetails",
-            id=channel_id
-        ).execute()
-
-        if not channels_response.get('items'):
-            logging.error(f"No channel found for ID: {channel_id}")
-            return []
-
-        # Get the uploads playlist ID
-        uploads_playlist_id = channels_response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
-
-        # Request videos from channel's uploads
+        # Request videos from playlist
         request = youtube.playlistItems().list(
             part="snippet",
-            playlistId=uploads_playlist_id,
+            playlistId=playlist_id,
             maxResults=50  # Fetch more to ensure we don't miss today's videos
         )
         response = request.execute()
@@ -46,11 +33,6 @@ def fetch_channel_videos(channel_id):
             # Skip private videos
             if snippet['title'] == 'Private video':
                 logging.info("Skipping private video")
-                continue
-                
-            # Skip if "Trailer" is not in the title
-            if 'Trailer' not in snippet['title']:
-                logging.info(f"Skipping non-trailer video: {snippet['title']}")
                 continue
                 
             published_at = datetime.fromisoformat(snippet['publishedAt'].replace('Z', '+00:00')).date()
@@ -71,47 +53,58 @@ def fetch_channel_videos(channel_id):
                     logging.warning(f"No thumbnail available for video ID: {video_id}")
 
                 video_data = {
-                    "type": "trailer",
+                    "type": "music",
                     "title": snippet['title'],
                     "url": f"https://www.youtube.com/watch?v={video_id}",
                     "date": today.strftime('%Y-%m-%d'),
                     "thumbnail": thumbnail_url,
+                    "insertDate": datetime.today().strftime('%Y-%m-%d'), 
                     "description": snippet.get('description', ''),
                     "published_at": snippet['publishedAt']
                 }
                 
                 videos.append(video_data)
-                logging.info(f"Found today's trailer: {video_data['title']} - {video_data['url']}")
+                logging.info(f"Found today's video: {video_data['title']} - {video_data['url']}")
 
         if not videos:
-            logging.info(f"No new trailers found today in channel {channel_id}")
+            logging.info(f"No new videos found today in playlist {playlist_id}")
             
         return videos
 
     except Exception as e:
-        logging.error(f"Failed to fetch channel videos: {str(e)}")
+        logging.error(f"Failed to fetch playlist videos: {str(e)}")
         return []
 
-def fetch_and_store_trailers():
-    """Main function to fetch and store trailer videos from multiple channels into MongoDB."""
+def fetch_and_store_music_videos():
+    """Main function to fetch and store music videos from multiple playlists."""
     try:
         all_videos = []
         
-        # Fetch videos from each channel
-        for channel_id in TRAILER_CHANNEL_IDS:
-            logging.info(f"Fetching videos from channel: {channel_id}")
-            videos = fetch_channel_videos(channel_id)
+        # Fetch videos from each playlist
+        for playlist_id in MUSIC_VIDEOS_CHANNEL_IDS:  # Note: These are actually playlist IDs now
+            logging.info(f"Fetching videos from playlist: {playlist_id}")
+            videos = fetch_playlist_videos(playlist_id)
             all_videos.extend(videos)
-            logging.info(f"Found {len(videos)} videos in channel {channel_id}")
+            logging.info(f"Found {len(videos)} videos in playlist {playlist_id}")
 
-        logging.info(f"Total videos found across all channels: {len(all_videos)}")
+        logging.info(f"Total videos found across all playlists: {len(all_videos)}")
         
         # Insert videos into MongoDB
         if all_videos:
             collection.insert_many(all_videos)
-            logging.info(f"Inserted {len(all_videos)} trailers into the collection.")
+            logging.info(f"Inserted {len(all_videos)} music videos into the collection.")
         else:
-            logging.info(f"No videos found in the channels.")
+            logging.info("No new music videos found today.")
+            
+        return all_videos
 
     except Exception as e:
-        logging.error(f"Failed to fetch and store trailers: {str(e)}")
+        logging.error(f"Failed to fetch and store music videos: {str(e)}")
+        return []
+
+# For testing purposes
+if __name__ == "__main__":
+    videos = fetch_and_store_music_videos()
+    if videos:
+        logging.info("Example of first video found:")
+        logging.info(videos[0])

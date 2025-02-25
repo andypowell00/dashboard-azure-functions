@@ -23,7 +23,7 @@ def fetch_rss_items(feed_url):
     news_items = []
     for entry in feed.entries:
         news_items.append({
-            "type": "music",  # Identifying the item type
+            "type": "news",  # Identifying the item type
             "title": entry.get("title"),
             "url": entry.get("link"),
             "date": entry.get("published", datetime.now().isoformat()),
