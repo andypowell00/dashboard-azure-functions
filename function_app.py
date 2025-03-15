@@ -25,7 +25,7 @@ def RedditTrigger(redditTimer: func.TimerRequest) -> None:
 
 # 2. News Trigger - Every morning at 5 a.m. EST :0 0 5 * * * 
 @app.function_name(name="InsertNewsTimerTrigger")
-@app.timer_trigger(schedule="0 0 5 * * *", arg_name="newsTimer", run_on_startup=False, use_monitor=False) 
+@app.timer_trigger(schedule="0 0 3 * * *", arg_name="newsTimer", run_on_startup=False, use_monitor=False) 
 def NewsTrigger(newsTimer: func.TimerRequest) -> None:
     if newsTimer.past_due:
         logging.info('The timer is past due!')
@@ -43,7 +43,7 @@ def WeatherTrigger(weatherTimer: func.TimerRequest) -> None:
 
 # 4. Movie Trailer Trigger - Everyday at 5 a.m.
 @app.function_name(name="InsertTrailersTimerTrigger")
-@app.timer_trigger(schedule="0 0 5 * * *", arg_name="trailersTimer", run_on_startup=False, use_monitor=False)
+@app.timer_trigger(schedule="0 0 3 * * *", arg_name="trailersTimer", run_on_startup=False, use_monitor=False)
 def TrailerTrigger(trailersTimer: func.TimerRequest) -> None:
     if trailersTimer.past_due:
         logging.info('The timer is past due!')
@@ -61,7 +61,7 @@ def MusicTrigger(musicTimer: func.TimerRequest) -> None:
 
 # 6. Music Videos Trigger - Everyday at 5 a.m. EST
 @app.function_name(name="InsertMusicVideosTimerTrigger")
-@app.timer_trigger(schedule="0 0 5 * * *", arg_name="musicVideosTimer", run_on_startup=False, use_monitor=False)
+@app.timer_trigger(schedule="0 0 3 * * *", arg_name="musicVideosTimer", run_on_startup=False, use_monitor=False)
 def MusicVideosTrigger(musicVideosTimer: func.TimerRequest) -> None:
     if musicVideosTimer.past_due:
         logging.info('The timer is past due!')

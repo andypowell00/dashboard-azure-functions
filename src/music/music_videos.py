@@ -23,7 +23,7 @@ def fetch_playlist_videos(playlist_id):
         request = youtube.playlistItems().list(
             part="snippet",
             playlistId=playlist_id,
-            maxResults=50  # Fetch more to ensure we don't miss today's videos
+            maxResults=30  # Fetch more to ensure we don't miss today's videos
         )
         response = request.execute()
 
