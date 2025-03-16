@@ -32,9 +32,9 @@ def NewsTrigger(newsTimer: func.TimerRequest) -> None:
     fetch_and_store_news()
     
 
-# 3. Weather Trigger - Every Monday at 5 a.m. EST :0 0 5 * * 1  
+# 3. Weather Trigger - Every 6 days  
 @app.function_name(name="InsertWeatherTimerTrigger")
-@app.timer_trigger(schedule="0 0 5 * * 1", arg_name="weatherTimer", run_on_startup=False, use_monitor=False) 
+@app.timer_trigger(schedule="6.00:00:00", arg_name="weatherTimer", run_on_startup=False, use_monitor=False) 
 def WeatherTrigger(weatherTimer: func.TimerRequest) -> None:
     if weatherTimer.past_due:
         logging.info('The timer is past due!')
