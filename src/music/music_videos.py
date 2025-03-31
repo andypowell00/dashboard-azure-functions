@@ -123,8 +123,21 @@ def fetch_and_store_music_videos():
         
         # Insert videos into MongoDB
         if all_videos:
-            collection.insert_many(all_videos)
-            logging.info(f"Inserted {len(all_videos)} music videos into the collection.")
+            # Check for duplicates before insertion
+            new_videos = []
+            for video in all_videos:
+                # Check if this video URL already exists in the database
+                existing = collection.find_one({"url": video["url"]})
+                if not existing:
+                    new_videos.append(video)
+                else:
+                    logging.info(f"Skipping duplicate video: {video['title']}")
+            
+            if new_videos:
+                collection.insert_many(new_videos)
+                logging.info(f"Inserted {len(new_videos)} music videos into the collection.")
+            else:
+                logging.info("No new unique music videos to insert.")
         else:
             logging.info("No new music videos found in the last 48 hours.")
             
