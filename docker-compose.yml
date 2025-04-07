@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  functions:
+    build: .
+    ports:
+      - "7071:80"
+    env_file:
+      - .env
+    environment:
+      - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+      - FUNCTIONS_WORKER_RUNTIME=python
+      - AzureWebJobsFeatureFlags=EnableWorkerIndexing
+      - AzureWebJobsDisableHomepage=true
+      - AZURE_FUNCTIONS_ENVIRONMENT=Development
+      - AzureWebJobsSecretStorageType=files
+      - AzureFunctionsJobHost__localTokens=true
+      - WEBSITE_SKIP_CONTENTSHARE_VALIDATION=1
+      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+      - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
+      - REDDIT_CLIENT_SECRET=${REDDIT_CLIENT_SECRET}
+      - REDDIT_USER_AGENT=${REDDIT_USER_AGENT}
+      - WEATHER_API_KEY=${WEATHER_API_KEY}
+      - COSMOS_DB_CONNECTION_STRING=mongodb://mongodb:27017
+      - COSMOS_DB_DATABASE_NAME=${COSMOS_DB_DATABASE_NAME}
+      - COSMOS_DB_CONTAINER_NAME=${COSMOS_DB_CONTAINER_NAME}
+    depends_on:
+      - mongodb
+      - azurite
+    networks:
+      - dashboard-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - dashboard-network
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    networks:
+      - dashboard-network
+
+networks:
+  dashboard-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

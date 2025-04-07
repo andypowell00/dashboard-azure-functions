@@ -1,0 +1,16 @@
+.git
+.gitignore
+.venv
+.env
+.vscode
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+local.settings.json
+.python_packages
+.vs
+test*.py
+Dockerfile*
+docker-compose*
+.dockerignore
