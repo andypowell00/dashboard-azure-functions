@@ -1,16 +1,22 @@
-.git
-.gitignore
-.venv
+# Ignore local virtual environments
+venv/
+.venv/
 .env
-.vscode
-__pycache__
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
-local.settings.json
-.python_packages
-.vs
-test*.py
-Dockerfile*
-docker-compose*
-.dockerignore
+
+# Ignore IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Ignore git and logs
+.git/
+.gitignore
+*.log
+
+# Ignore test caches
+.coverage
+pytest_cache/

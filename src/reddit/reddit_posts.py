@@ -4,17 +4,15 @@ import praw  # Reddit API wrapper
 from datetime import datetime
 from src.utils.db_connection import get_collection
 
-# Set up Reddit client
-reddit = praw.Reddit(
-    client_id=os.getenv('REDDIT_CLIENT_ID'),
-    client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
-    user_agent=os.getenv('REDDIT_USER_AGENT')
-)
-
-collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
 
 def fetch_and_store_reddit_posts(subreddit_name, post_limit=5):
     try:
+        # Set up Reddit client
+        reddit = praw.Reddit(
+            client_id=os.getenv('REDDIT_CLIENT_ID'),
+            client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
+            user_agent=os.getenv('REDDIT_USER_AGENT')
+        )
         subreddit = reddit.subreddit(subreddit_name)
         posts = subreddit.hot(limit=post_limit)
 
@@ -40,6 +38,7 @@ def fetch_and_store_reddit_posts(subreddit_name, post_limit=5):
             post_data.append(post_info)
 
         if post_data:
+            collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
             collection.insert_many(post_data)
             logging.info(f"Inserted {len(post_data)} posts into the 'RedditPosts' collection.")
         else:

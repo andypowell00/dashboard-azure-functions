@@ -7,9 +7,6 @@ from src.utils.db_connection import get_collection
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
-# MongoDB setup
-collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))  
-
 
 def fetch_rss_items(feed_url):
     """Fetch and parse RSS feed items."""
@@ -44,6 +41,8 @@ def extract_thumbnail(entry):
 def fetch_and_store_feeds(feed_urls):
     """Fetch items from RSS feeds and insert them into MongoDB."""
     try:
+        # MongoDB setup
+        collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))  
         for feed_url in feed_urls:
             logging.info(f"Processing feed: {feed_url}")
             news_items = fetch_rss_items(feed_url)

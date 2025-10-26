@@ -5,9 +5,6 @@ import feedparser
 from src.utils.db_connection import get_collection
 from src.utils.constants import NEWS_URL
 
-# Specify the collection you need
-news_collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
-
 
 def fetch_rss_items(feed_url):
     """Fetch and parse RSS feed items."""
@@ -47,6 +44,8 @@ def fetch_rss_items(feed_url):
 def save_article_to_mongo(article_details):
     """Save article details to MongoDB."""
     try:
+        # Specify the collection you need
+        news_collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
         if article_details:
             # Check for duplicates based on URL
             if not news_collection.find_one({"url": article_details["url"]}):

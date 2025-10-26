@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Set up YouTube API client
 API_KEY = os.getenv('YOUTUBE_API_KEY')
-collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
+
 
 def fetch_channel_videos(channel_id):
     """Fetch recent trailer videos directly from a channel's uploads."""
@@ -134,6 +134,7 @@ def fetch_and_store_trailers():
         # Insert videos into MongoDB
         if all_videos:
             # Check for duplicates before insertion
+            collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
             new_videos = []
             for video in all_videos:
                 # Check if this video URL already exists in the database

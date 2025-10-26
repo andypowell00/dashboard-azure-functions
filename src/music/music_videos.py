@@ -10,7 +10,6 @@ logging.basicConfig(level=logging.INFO)
 
 # Set up YouTube API client
 API_KEY = os.getenv('YOUTUBE_API_KEY')
-collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
 
 def fetch_playlist_videos(playlist_id):
     """Fetch recent videos from a playlist by playlist ID, skipping private videos."""
@@ -123,6 +122,8 @@ def fetch_and_store_music_videos():
         
         # Insert videos into MongoDB
         if all_videos:
+            collection = get_collection(os.getenv("COSMOS_DB_CONTAINER_NAME"))
+
             # Check for duplicates before insertion
             new_videos = []
             for video in all_videos:
